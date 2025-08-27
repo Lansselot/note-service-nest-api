@@ -1,0 +1,57 @@
+services:
+  postgres:
+    container_name: postgres_nest_note_service
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - '${POSTGRES_PORT}:5432'
+    volumes:
+      - postgres_nest_note_service_data:/var/lib/postgresql/data
+    networks:
+      - note-nest-service
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER}']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  # redis:
+  #   container_name: redis
+  #   image: redis:latest
+  #   restart: always
+  #   environment:
+  #     - REDIS_HOST=${REDIS_HOST}
+  #     - REDIS_PORT=${REDIS_PORT}
+  #     - REDIS_PASSWORD=${REDIS_PASSWORD}
+  #   ports:
+  #     - '${REDIS_PORT}:${REDIS_PORT}'
+  #   command:
+  #     - /bin/sh
+  #     - -c
+  #     - redis-server --requirepass '${REDIS_PASSWORD}'
+  #   networks:
+  #     - note-service
+  # app:
+  #   container_name: note_app
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - '${PORT}:${PORT}'
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_started
+  #   networks:
+  #     - note-service
+  #   volumes:
+  #     - .:/dist
+
+volumes:
+  postgres_nest_note_service_data:
+
+networks:
+  note-nest-service:
