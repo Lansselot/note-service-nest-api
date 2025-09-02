@@ -17,22 +17,21 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-  # redis:
-  #   container_name: redis
-  #   image: redis:latest
-  #   restart: always
-  #   environment:
-  #     - REDIS_HOST=${REDIS_HOST}
-  #     - REDIS_PORT=${REDIS_PORT}
-  #     - REDIS_PASSWORD=${REDIS_PASSWORD}
-  #   ports:
-  #     - '${REDIS_PORT}:${REDIS_PORT}'
-  #   command:
-  #     - /bin/sh
-  #     - -c
-  #     - redis-server --requirepass '${REDIS_PASSWORD}'
-  #   networks:
-  #     - note-service
+  redis:
+    container_name: redis_nest_note_service
+    image: redis:latest
+    restart: always
+    environment:
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    ports:
+      - '${REDIS_PORT}:6379'
+    command:
+      - /bin/sh
+      - -c
+      - redis-server --requirepass '${REDIS_PASSWORD}'
+    networks:
+      - note-nest-service
   # app:
   #   container_name: note_app
   #   build:

@@ -1,53 +1,61 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Patch,
-  Param,
   Delete,
+  UseGuards,
+  HttpCode,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ChangeEmailDto } from './dto/change-email.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { UserPayload } from './decorators/user-payload.decorator';
+import { JwtUserPayload } from 'src/common/dto/jwt-payload.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  createUser(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.createUser(createUserDto);
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  getUserById(@UserPayload() userPayload: JwtUserPayload) {
+    return this.usersService.getUserById(userPayload.userId);
   }
 
-  @Get(':id')
-  getUserById(@Param('id') id: string) {
-    return this.usersService.getUserById(id);
-  }
-
-  @Patch(':id')
+  @Patch()
+  @UseGuards(JwtAuthGuard)
   updateUserById(
-    @Param('id') id: string,
+    @UserPayload() userPayload: JwtUserPayload,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return this.usersService.updateUserById(id, updateUserDto);
+    return this.usersService.updateUserById(userPayload.userId, updateUserDto);
   }
 
-  @Delete(':id')
-  deleteUser(@Param('id') id: string) {
-    return this.usersService.deleteUser(id);
+  @Delete()
+  @HttpCode(204)
+  @UseGuards(JwtAuthGuard)
+  deleteUser(@UserPayload() userPayload: JwtUserPayload) {
+    return this.usersService.deleteUser(userPayload.userId);
   }
 
-  @Patch('change-email/:id')
-  changeEmail(@Param('id') id: string, @Body() data: ChangeEmailDto) {
-    return this.usersService.changeEmail(id, data);
+  @Patch('change-email')
+  @UseGuards(JwtAuthGuard)
+  changeEmail(
+    @UserPayload() userPayload: JwtUserPayload,
+    @Body() data: ChangeEmailDto,
+  ) {
+    return this.usersService.changeEmail(userPayload.userId, data);
   }
 
-  @Patch('change-password/:id')
-  changePassword(@Param('id') id: string, @Body() data: ChangePasswordDto) {
-    return this.usersService.changePassword(id, data);
+  @Patch('change-password')
+  @UseGuards(JwtAuthGuard)
+  changePassword(
+    @UserPayload() userPayload: JwtUserPayload,
+    @Body() data: ChangePasswordDto,
+  ) {
+    return this.usersService.changePassword(userPayload.userId, data);
   }
 }
-//TODO: ID FROM PAYLOAD
