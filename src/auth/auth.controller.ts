@@ -5,6 +5,7 @@ import {
   Request,
   Body,
   Get,
+  HttpCode,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
@@ -28,6 +29,7 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
+  @HttpCode(200)
   login(@UserPayload() userPayload: JwtUserPayload) {
     return this.authService.login(userPayload.userId);
   }
