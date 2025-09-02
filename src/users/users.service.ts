@@ -6,6 +6,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { ChangeEmailDto } from './dto/change-email.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { UserResponseDto } from './dto/user-response.dto';
+import { CreateGoogleUserDto } from './dto/create-google-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -39,11 +40,12 @@ export class UsersService {
     return user;
   }
 
-  // async getUserByEmail(email: string): Promise<User | null> {
-  //   return this.prisma.user.findUnique({
-  //     where: { email },
-  //   });
-  // }
+  async getUserByEmail(email: string): Promise<UserResponseDto | null> {
+    return this.prisma.user.findUnique({
+      where: { email },
+      select: { id: true, name: true, email: true },
+    });
+  }
 
   async updateUserById(
     userId: string,
@@ -104,6 +106,22 @@ export class UsersService {
     return this.prisma.user.update({
       where: { id: userId },
       data: { passwordHash: newPasswordHash },
+      select: { id: true, name: true, email: true },
+    });
+  }
+
+  async createGoogleUser({
+    id,
+    name,
+    email,
+  }: CreateGoogleUserDto): Promise<UserResponseDto | null> {
+    return this.prisma.user.create({
+      data: {
+        id,
+        name,
+        email,
+        passwordHash: '',
+      },
       select: { id: true, name: true, email: true },
     });
   }

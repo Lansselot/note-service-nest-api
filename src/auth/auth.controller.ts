@@ -1,10 +1,18 @@
-import { Controller, Post, UseGuards, Request, Body } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  UseGuards,
+  Request,
+  Body,
+  Get,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { UsersService } from 'src/users/users.service';
 import { UserPayload } from 'src/users/decorators/user-payload.decorator';
 import { JwtUserPayload } from 'src/common/dto/jwt-payload.dto';
+import { GoogleAuthGuard } from './guards/google-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -21,6 +29,16 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   login(@UserPayload() userPayload: JwtUserPayload) {
+    return this.authService.login(userPayload.userId);
+  }
+
+  @Get('google')
+  @UseGuards(GoogleAuthGuard)
+  async googleAuth() {}
+
+  @UseGuards(GoogleAuthGuard)
+  @Get('google/callback')
+  googleLogin(@UserPayload() userPayload: JwtUserPayload) {
     return this.authService.login(userPayload.userId);
   }
 }
