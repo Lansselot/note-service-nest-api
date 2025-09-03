@@ -7,10 +7,18 @@ import { UsersModule } from 'src/users/users.module';
 import { JwtTokensModule } from './jwt-tokens/jwt-tokens.module';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { GoogleStrategy } from './strategies/google.strategy';
+import { TokenStorageModule } from './token-storage/token-storage.module';
+import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
 
 @Module({
-  imports: [UsersModule, PassportModule, JwtTokensModule],
+  imports: [UsersModule, PassportModule, JwtTokensModule, TokenStorageModule],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy, GoogleStrategy],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+    GoogleStrategy,
+    JwtRefreshStrategy,
+  ],
 })
 export class AuthModule {}

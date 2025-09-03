@@ -1,12 +1,12 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import bcrypt from 'bcryptjs';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ChangeEmailDto } from './dto/change-email.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { UserResponseDto } from './dto/user-response.dto';
 import { CreateGoogleUserDto } from './dto/create-google-user.dto';
+import argon2 from 'argon2';
 
 @Injectable()
 export class UsersService {
@@ -17,7 +17,7 @@ export class UsersService {
     email,
     password,
   }: CreateUserDto): Promise<UserResponseDto | null> {
-    const passwordHash = await bcrypt.hash(password, 10);
+    const passwordHash = await argon2.hash(password);
 
     return this.prisma.user.create({
       data: {
@@ -73,7 +73,7 @@ export class UsersService {
       where: { id: userId },
     });
 
-    const isPasswordValid = await bcrypt.compare(password, user!.passwordHash);
+    const isPasswordValid = await argon2.verify(user!.passwordHash, password);
 
     if (!isPasswordValid)
       throw new UnauthorizedException('Invalid credentials');
@@ -93,15 +93,14 @@ export class UsersService {
       where: { id: userId },
     });
 
-    const isPasswordValid = await bcrypt.compare(
-      currentPassword,
+    const isPasswordValid = await argon2.verify(
       user!.passwordHash,
+      currentPassword,
     );
-
     if (!isPasswordValid)
       throw new UnauthorizedException('Invalid credentials');
 
-    const newPasswordHash = await bcrypt.hash(newPassword, 10);
+    const newPasswordHash = await argon2.hash(newPassword);
 
     return this.prisma.user.update({
       where: { id: userId },
