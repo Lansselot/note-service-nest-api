@@ -6,6 +6,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtTokensModule } from './auth/jwt-tokens/jwt-tokens.module';
 import { RedisModule } from './redis/redis.module';
+import { TokenStorageModule } from './auth/token-storage/token-storage.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { RedisModule } from './redis/redis.module';
     AuthModule,
     JwtTokensModule,
     RedisModule,
+    TokenStorageModule,
   ],
   controllers: [AppController],
   providers: [AppService],
