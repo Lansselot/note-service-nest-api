@@ -9,6 +9,7 @@ import { RedisModule } from './redis/redis.module';
 import { TokenStorageModule } from './auth/token-storage/token-storage.module';
 import { OtpModule } from './auth/otp/otp.module';
 import { OtpStorageModule } from './auth/otp/otp-storage/otp-storage.module';
+import { MailerModule } from './mailer/mailer.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { OtpStorageModule } from './auth/otp/otp-storage/otp-storage.module';
     TokenStorageModule,
     OtpModule,
     OtpStorageModule,
+    MailerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
