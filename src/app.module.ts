@@ -7,6 +7,8 @@ import { AuthModule } from './auth/auth.module';
 import { JwtTokensModule } from './auth/jwt-tokens/jwt-tokens.module';
 import { RedisModule } from './redis/redis.module';
 import { TokenStorageModule } from './auth/token-storage/token-storage.module';
+import { OtpModule } from './auth/otp/otp.module';
+import { OtpStorageModule } from './auth/otp/otp-storage/otp-storage.module';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { TokenStorageModule } from './auth/token-storage/token-storage.module';
     JwtTokensModule,
     RedisModule,
     TokenStorageModule,
+    OtpModule,
+    OtpStorageModule,
   ],
   controllers: [AppController],
   providers: [AppService],
