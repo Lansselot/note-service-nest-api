@@ -16,6 +16,8 @@ import { JwtUserPayload } from 'src/common/dto/jwt-payload.dto';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { VerifyOtpDto } from './otp/dto/verify-otp.dto';
+import { RequestOtpDto } from './otp/dto/request-otp.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -59,5 +61,17 @@ export class AuthController {
   @Post('logout')
   logout(@UserPayload() userPayload: JwtUserPayload) {
     return this.authService.logout(userPayload.userId, userPayload.sessionId);
+  }
+
+  @Post('otp')
+  @HttpCode(200)
+  requestOtp(@Body() { email }: RequestOtpDto) {
+    return this.authService.requestOtp(email);
+  }
+
+  @Post('otp/verify')
+  @HttpCode(200)
+  verifyOtp(@Body() { email, otp }: VerifyOtpDto) {
+    return this.authService.verifyOtp(email, otp);
   }
 }

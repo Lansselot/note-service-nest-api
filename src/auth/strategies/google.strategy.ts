@@ -22,7 +22,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   ) {
     if (!profile.emails || profile.emails.length === 0)
       throw new UnauthorizedException('No email found from Google');
-    console.log(profile);
 
     const existingUser = await this.userService.getUserByEmail(
       profile.emails[0].value,

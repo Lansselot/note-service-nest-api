@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { LoginUserDto } from './dto/login-user.dto';
 import { JwtTokensDto } from './dto/jwt-tokens.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -9,6 +9,7 @@ import { JwtTokensService } from './jwt-tokens/jwt-tokens.service';
 import { TokenStorageService } from './token-storage/token-storage.service';
 import { UsersService } from 'src/users/users.service';
 import argon2 from 'argon2';
+import { OtpService } from './otp/otp.service';
 
 @Injectable()
 export class AuthService {
@@ -17,6 +18,7 @@ export class AuthService {
     private jwtTokensService: JwtTokensService,
     private tokenStorageService: TokenStorageService,
     private usersService: UsersService,
+    private otpService: OtpService,
   ) {}
 
   async validateUser({ email, password }: LoginUserDto): Promise<User | null> {
@@ -70,5 +72,20 @@ export class AuthService {
 
   async logout(userId: string, sessionId: string) {
     await this.tokenStorageService.deleteRefreshToken(userId, sessionId);
+  }
+
+  async requestOtp(email: string) {
+    const user = await this.usersService.getUserByEmail(email);
+    if (user) await this.otpService.sendOTP(email);
+  }
+
+  async verifyOtp(email: string, otp: string) {
+    const user = await this.usersService.getUserByEmail(email);
+    if (!user) throw new UnauthorizedException('Invalid OTP');
+
+    const verifed = await this.otpService.verifyOTP(email, otp);
+    if (!verifed) throw new UnauthorizedException('Invalid OTP');
+
+    return this.createSessionAndGenerateTokens(user.id);
   }
 }
