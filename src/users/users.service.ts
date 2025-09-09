@@ -110,17 +110,11 @@ export class UsersService {
   }
 
   async createGoogleUser({
-    id,
     name,
     email,
   }: CreateGoogleUserDto): Promise<UserResponseDto | null> {
     return this.prisma.user.create({
-      data: {
-        id,
-        name,
-        email,
-        passwordHash: '',
-      },
+      data: { name, email, passwordHash: '' },
       select: { id: true, name: true, email: true },
     });
   }
