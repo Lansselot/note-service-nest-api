@@ -50,6 +50,7 @@ export class AuthController {
 
   @UseGuards(JwtRefreshGuard)
   @Post('refresh')
+  @HttpCode(200)
   refresh(@UserPayload() userPayload: JwtUserPayload) {
     return this.authService.createSessionAndGenerateTokens(
       userPayload.userId,
